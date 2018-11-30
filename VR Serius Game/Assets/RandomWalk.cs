@@ -17,6 +17,7 @@ public class RandomWalk : MonoBehaviour
 
 	void Start ()
     {
+        print("randomWalkerSomewhere");
         iterationsInShop = Random.Range(3, 7);
         agent = GetComponent<NavMeshAgent>();
         currentTime = maxTime;
@@ -43,7 +44,7 @@ public class RandomWalk : MonoBehaviour
             {
                 if (willBuySomething)
                 {
-                    shop.AddToQueue(this);
+                    //shop.AddToQueue(this);
                 }
                 else
                 {
@@ -67,7 +68,6 @@ public class RandomWalk : MonoBehaviour
 
     public Vector3 GetNewLocationInShop()
     {
-
         return shop.GetNewLocationInShop();
     }
 }
