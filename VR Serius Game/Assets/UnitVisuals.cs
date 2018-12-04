@@ -28,6 +28,9 @@ public class UnitVisuals : MonoBehaviour
     [SerializeField] private MeshFilter legsMesh;
     [SerializeField] private MeshRenderer legsRenderer;
 
+    public Material red;
+    public Material green;
+
     private CharacterVisuals GetVisuals()
     {
         CharacterVisuals v = new CharacterVisuals();
@@ -57,6 +60,14 @@ public class UnitVisuals : MonoBehaviour
 
         legsMesh.mesh = v.legsStyle;
         legsRenderer.material = v.legsColor;
+    }
+
+    public void switchTag(bool tagged)
+    {
+        //bodyRenderer.material = tagged ? red : green;
+        //hairRenderer.material = tagged ? red : green;
+        //legsRenderer.material = tagged ? red : green;
+        GetComponent<MeshRenderer>().material = tagged ? red : green;
     }
 }
 

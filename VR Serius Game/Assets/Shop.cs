@@ -25,9 +25,13 @@ public class Shop : MonoBehaviour
     private float dressingCurrentTimer;
     private int dressingQueueIteration;
 
+    public int spawnAmount;
+
+
+    Unit tempU;
     private void Start()
     {
-        for (int i = 0; i < Random.Range(10,20); i++)
+        for (int i = 0; i < spawnAmount; i++)
         {
             SpawnNewCharacter();
         }
@@ -38,7 +42,12 @@ public class Shop : MonoBehaviour
 
     private void Update()
     {
-        if (CheckCounterQueue())
+        if (Input.GetKey(KeyCode.Space))
+            tempU.ChangeColor(true);
+        else
+            tempU.ChangeColor(false);
+
+            if (CheckCounterQueue())
             HandleCounterQueue();
 
         if (CheckDressingQueue())
@@ -69,6 +78,7 @@ public class Shop : MonoBehaviour
     {
         return dressingWalkers.Count > 0;
     }
+
     public void HandleDressingQueue()
     {
         dressingCurrentTimer -= Time.deltaTime;
@@ -89,7 +99,6 @@ public class Shop : MonoBehaviour
     {
         Vector3 newLocation = Random.insideUnitSphere * shopRadius;
         newLocation.y = 0;
-        print(newLocation);
         return newLocation;
     }
     public Vector3 GetShopExit()
@@ -117,6 +126,7 @@ public class Shop : MonoBehaviour
         u.transform.SetParent(ai);
         print("spawned");
         u.Init(this);
+        tempU = u;
     }
     public void RemoveCharacter(Unit u)
     {

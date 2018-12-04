@@ -8,22 +8,48 @@ using Valve.VR.InteractionSystem;
 public class CharacterInput : MonoBehaviour
 {
     public SteamVR_Action_Boolean testTriggerAction;
-    public Hand right;
-    public GameObject finger;
+    public Hand rightHand;
 
 	void Update ()
     {
-        string s = "";
-        if (testTriggerAction != null)
-            s+= "working";
         if (Test())
-            s += "UseSecond";
-        if (IsEligible(right))
-            s += "TRUE";
+            print("UseSecond");
+        //if (IsEligible(rightHand))
+        
 
-        print(s);
-        finger.SetActive(Test());
+        //(gameObject)finger.SetActive(Test());
+        CheckPointing();
 	}
+
+    public void CheckPointing()
+    {
+        Unit u = null;
+        if (Test())
+        {
+            Debug.DrawRay(rightHand.gameObject.transform.position, rightHand.gameObject.transform.forward * 100);
+            RaycastHit hit;
+            if (Physics.Raycast(rightHand.gameObject.transform.position, rightHand.gameObject.transform.forward, out hit, Mathf.Infinity))
+            {
+                if (hit.transform.gameObject.CompareTag("Unit"))
+                {
+                    u = hit.transform.GetComponent<Unit>();
+                    u.ChangeColor(true);
+                }
+            }
+
+        }
+        else if (u != null)
+        {
+            u.ChangeColor(false);
+            u = null;
+        }
+            
+    }
+
+    public bool Test()
+    {
+        return testTriggerAction.GetState(rightHand.handType);
+    }
 
     public bool IsEligible(Hand hand)
     {
@@ -44,10 +70,5 @@ public class CharacterInput : MonoBehaviour
             }
         }
         return true;
-    }
-
-    public bool Test()
-    {
-        return testTriggerAction.GetState(right.handType);
     }
 }

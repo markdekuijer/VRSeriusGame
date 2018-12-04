@@ -50,7 +50,7 @@ public class Unit : MonoBehaviour
     public void RandomizeStats()
     {
         willDressCloths = (RandomizedStats.dressChange < Random.Range(0, 100));
-        stealing = false;// (RandomizedStats.stealingChange < Random.Range(0, 100));
+        stealing = (RandomizedStats.stealingChange < Random.Range(0, 100));
                          //if(!stealing)
         willBuySomething = true; //(RandomizedStats.buyingChange < Random.Range(0, 100));
     }
@@ -114,11 +114,16 @@ public class Unit : MonoBehaviour
             Debug.LogError("Game Over");
         }
     }
+
+    public void ChangeColor(bool on)
+    {
+        visuals.switchTag(on);
+    }
 }
 
 public static class RandomizedStats
 {
-    public static float stealingChange = 0f;
+    public static float stealingChange = 100f;
     public static float buyingChange = 80f;
     public static float dressChange = 100;
 }

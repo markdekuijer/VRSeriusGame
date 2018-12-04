@@ -221,7 +221,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 9912fabae89561e45afa01013e19bd02, type: 2}
+  - {fileID: 2100000, guid: 2c00ac9abc13d084b8b31b95bd5954c5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -352,6 +352,8 @@ MonoBehaviour:
   bodyRenderer: {fileID: 23639140347486670}
   legsMesh: {fileID: 33228914773105040}
   legsRenderer: {fileID: 23000274980506038}
+  red: {fileID: 2100000, guid: 9912fabae89561e45afa01013e19bd02, type: 2}
+  green: {fileID: 2100000, guid: 2c00ac9abc13d084b8b31b95bd5954c5, type: 2}
 --- !u!136 &136530579089394032
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -374,7 +376,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
