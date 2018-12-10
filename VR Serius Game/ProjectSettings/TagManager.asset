@@ -7,6 +7,9 @@ TagManager:
   - FxTemporaire
   - projectile
   - Unit
+  - BarCode
+  - Bags
+  - Cloth
   layers:
   - Default
   - TransparentFX

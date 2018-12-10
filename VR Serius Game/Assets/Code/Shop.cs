@@ -47,8 +47,8 @@ public class Shop : MonoBehaviour
         else
             tempU.ChangeColor(false);
 
-            if (CheckCounterQueue())
-            HandleCounterQueue();
+            //if (CheckCounterQueue())
+            //HandleCounterQueue();
 
         if (CheckDressingQueue())
             HandleDressingQueue();
@@ -58,19 +58,32 @@ public class Shop : MonoBehaviour
     {
         return counterWalkers.Count > 0;
     }
+    //public void HandleCounterQueue()
+    //{
+    //    counterCurrentTimer -= Time.deltaTime;
+    //    if (counterCurrentTimer <= 0)
+    //    {
+    //        counterWalkers[0].Leave();
+    //        counterWalkers.RemoveAt(0);
+    //        counterQueueIteration--;
+    //        for (int i = 0; i < counterWalkers.Count; i++)
+    //        {
+    //            counterWalkers[i].SetQueuePositions(queuePositions[i]);
+    //        }
+    //        counterCurrentTimer = maxTimer;
+    //    }
+    //}
     public void HandleCounterQueue()
     {
-        counterCurrentTimer -= Time.deltaTime;
-        if (counterCurrentTimer <= 0)
+        if (!CheckCounterQueue())
+            return;
+
+        counterWalkers[0].Leave();
+        counterWalkers.RemoveAt(0);
+        counterQueueIteration--;
+        for (int i = 0; i < counterWalkers.Count; i++)
         {
-            counterWalkers[0].Leave();
-            counterWalkers.RemoveAt(0);
-            counterQueueIteration--;
-            for (int i = 0; i < counterWalkers.Count; i++)
-            {
-                counterWalkers[i].SetQueuePositions(queuePositions[i]);
-            }
-            counterCurrentTimer = maxTimer;
+            counterWalkers[i].SetQueuePositions(queuePositions[i]);
         }
     }
 
