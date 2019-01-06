@@ -14,6 +14,7 @@ public class Shop : MonoBehaviour
     [SerializeField] private List<Transform> outsideSpawns = new List<Transform>();
     [SerializeField] private List<Transform> queuePositions = new List<Transform>();
     [SerializeField] private List<Transform> dressingPositions = new List<Transform>();
+    [SerializeField] private List<Transform> dressingPositions2 = new List<Transform>();
 
     public Transform ai;
 
@@ -24,6 +25,10 @@ public class Shop : MonoBehaviour
     private List<Unit> dressingWalkers = new List<Unit>();
     private float dressingCurrentTimer;
     private int dressingQueueIteration;
+
+    private List<Unit> dressingWalkers2 = new List<Unit>();
+    private float dressingCurrentTimer2;
+    private int dressingQueueIteration2;
 
     public int spawnAmount;
 
@@ -38,6 +43,7 @@ public class Shop : MonoBehaviour
 
         counterCurrentTimer = maxTimer;
         dressingCurrentTimer = maxTimer;
+        dressingCurrentTimer2 = maxTimer;
     }
 
     private void Update()
@@ -46,9 +52,6 @@ public class Shop : MonoBehaviour
             tempU.ChangeColor(true);
         else
             tempU.ChangeColor(false);
-
-            //if (CheckCounterQueue())
-            //HandleCounterQueue();
 
         if (CheckDressingQueue())
             HandleDressingQueue();
@@ -89,13 +92,15 @@ public class Shop : MonoBehaviour
 
     public bool CheckDressingQueue()
     {
-        return dressingWalkers.Count > 0;
+        return dressingWalkers.Count > 0 || dressingWalkers2.Count > 0;
     }
 
     public void HandleDressingQueue()
     {
         dressingCurrentTimer -= Time.deltaTime;
-        if (dressingCurrentTimer <= 0)
+        dressingCurrentTimer2 -= Time.deltaTime;
+
+        if (dressingCurrentTimer <= 0 && dressingWalkers.Count > 0)
         {
             dressingWalkers[0].CheckForStealOrBuy();
             dressingWalkers.RemoveAt(0);
@@ -105,6 +110,17 @@ public class Shop : MonoBehaviour
                 dressingWalkers[i].SetQueuePositions(dressingPositions[i]);
             }
             dressingCurrentTimer = maxTimer;
+        }
+        if (dressingCurrentTimer2 <= 0 && dressingWalkers2.Count > 0)
+        {
+            dressingWalkers2[0].CheckForStealOrBuy();
+            dressingWalkers2.RemoveAt(0);
+            dressingQueueIteration2--;
+            for (int i = 0; i < dressingWalkers2.Count; i++)
+            {
+                dressingWalkers2[i].SetQueuePositions(dressingPositions2[i]);
+            }
+            dressingCurrentTimer2 = maxTimer;
         }
     }
 
@@ -127,14 +143,42 @@ public class Shop : MonoBehaviour
     }
     public void AddToDressing(Unit unit)
     {
+        if(dressingQueueIteration == dressingQueueIteration2)
+        {
+            if(Random.Range(0, 2) < 1)
+            {
+                AddQueue1(unit);
+            }
+            else
+            {
+                AddQueue2(unit);
+            }
+        }
+        else if(dressingQueueIteration > dressingQueueIteration2)
+        {
+            AddQueue2(unit);
+        }
+        else
+        {
+            AddQueue1(unit);
+        }
+    }
+
+    private void AddQueue1(Unit unit)
+    {
         unit.SetQueuePositions(dressingPositions[dressingQueueIteration]);
         dressingWalkers.Add(unit);
         dressingQueueIteration++;
     }
+    private void AddQueue2(Unit unit)
+    {
+        unit.SetQueuePositions(dressingPositions2[dressingQueueIteration2]);
+        dressingWalkers2.Add(unit);
+        dressingQueueIteration2++;
+    }
 
     public void SpawnNewCharacter()
     {
-        //GetCharacterFromPool
         Unit u = Instantiate(UnitPrefab, outsideSpawns[Random.Range(0, outsideSpawns.Count)]).GetComponent<Unit>();
         u.transform.SetParent(ai);
         print("spawned");
