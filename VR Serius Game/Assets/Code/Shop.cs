@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,11 @@ public class Shop : MonoBehaviour
     [SerializeField] private List<Transform> outsideSpawns = new List<Transform>();
     [SerializeField] private List<Transform> queuePositions = new List<Transform>();
     [SerializeField] private List<Transform> dressingPositions = new List<Transform>();
-    [SerializeField] private List<Transform> dressingPositions2 = new List<Transform>();
+
+    public Transform spawnMoneyPos;
+    public GameObject money;
+    public Transform spawnClothPos;
+    public GameObject[] Cloths;
 
     public Transform ai;
 
@@ -26,14 +31,11 @@ public class Shop : MonoBehaviour
     private float dressingCurrentTimer;
     private int dressingQueueIteration;
 
-    private List<Unit> dressingWalkers2 = new List<Unit>();
-    private float dressingCurrentTimer2;
-    private int dressingQueueIteration2;
-
     public int spawnAmount;
 
+    public List<Transform> locations = new List<Transform>();
 
-    Unit tempU;
+    //Unit tempU;
     private void Start()
     {
         for (int i = 0; i < spawnAmount; i++)
@@ -43,18 +45,18 @@ public class Shop : MonoBehaviour
 
         counterCurrentTimer = maxTimer;
         dressingCurrentTimer = maxTimer;
-        dressingCurrentTimer2 = maxTimer;
     }
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
-            tempU.ChangeColor(true);
-        else
-            tempU.ChangeColor(false);
+        //if (Input.GetKey(KeyCode.Space))
+        //    tempU.ChangeColor(true);
+        //else
+        //    tempU.ChangeColor(false);
 
         if (CheckDressingQueue())
             HandleDressingQueue();
+
     }
 
     public bool CheckCounterQueue()
@@ -88,47 +90,62 @@ public class Shop : MonoBehaviour
         {
             counterWalkers[i].SetQueuePositions(queuePositions[i]);
         }
+        SpawnNewSet();
+    }
+
+    public void SpawnNewSet()
+    {
+        int iterationns = UnityEngine.Random.Range(1, 4);
+        for (int i = 0; i < iterationns; i++)
+        {
+            GameObject g = Instantiate(money, spawnMoneyPos.position + (Vector3.up * 0.05f), Quaternion.identity);
+            GameObject c = Instantiate(Cloths[UnityEngine.Random.Range(0, 1)], spawnClothPos.position +( (Vector3.up * 0.1f) * i),Quaternion.identity);
+        }
     }
 
     public bool CheckDressingQueue()
     {
-        return dressingWalkers.Count > 0 || dressingWalkers2.Count > 0;
+        return dressingWalkers.Count > 0;
     }
 
     public void HandleDressingQueue()
     {
         dressingCurrentTimer -= Time.deltaTime;
-        dressingCurrentTimer2 -= Time.deltaTime;
-
         if (dressingCurrentTimer <= 0 && dressingWalkers.Count > 0)
+        {
+            if (dressingWalkers.Count > 2)
+                SetNextPosIterations(3);
+            else if (dressingWalkers.Count > 1)
+                SetNextPosIterations(2);
+            else if (dressingWalkers.Count > 0)
+                SetNextPosIterations(1);
+
+            dressingCurrentTimer = maxTimer;
+        }
+    }
+
+    public void SetNextPosIterations(int iter)
+    {
+        for (int j = 0; j < iter; j++)
         {
             dressingWalkers[0].CheckForStealOrBuy();
             dressingWalkers.RemoveAt(0);
             dressingQueueIteration--;
+
             for (int i = 0; i < dressingWalkers.Count; i++)
             {
                 dressingWalkers[i].SetQueuePositions(dressingPositions[i]);
             }
-            dressingCurrentTimer = maxTimer;
-        }
-        if (dressingCurrentTimer2 <= 0 && dressingWalkers2.Count > 0)
-        {
-            dressingWalkers2[0].CheckForStealOrBuy();
-            dressingWalkers2.RemoveAt(0);
-            dressingQueueIteration2--;
-            for (int i = 0; i < dressingWalkers2.Count; i++)
-            {
-                dressingWalkers2[i].SetQueuePositions(dressingPositions2[i]);
-            }
-            dressingCurrentTimer2 = maxTimer;
         }
     }
 
     public Vector3 GetNewLocationInShop()
     {
-        Vector3 newLocation = Random.insideUnitSphere * shopRadius;
-        newLocation.y = 0;
-        return newLocation;
+        Vector3 v = Vector3.zero;
+        v = UnityEngine.Random.insideUnitSphere * shopRadius + locations[UnityEngine.Random.Range(0, locations.Count - 1)].position;
+        v.y = 0;
+
+        return v;
     }
     public Vector3 GetShopExit()
     {
@@ -137,53 +154,36 @@ public class Shop : MonoBehaviour
 
     public void AddToCounterQueue(Unit unit)
     {
+        print("added unit " + unit.gameObject.name);
+        unit.checkSpawnStuff = true;
+        unit.checkSpawnStuffPos = queuePositions[0].position;
         unit.SetQueuePositions(queuePositions[counterQueueIteration]);
         counterWalkers.Add(unit);
         counterQueueIteration++;
     }
     public void AddToDressing(Unit unit)
     {
-        if(dressingQueueIteration == dressingQueueIteration2)
-        {
-            if(Random.Range(0, 2) < 1)
-            {
-                AddQueue1(unit);
-            }
-            else
-            {
-                AddQueue2(unit);
-            }
-        }
-        else if(dressingQueueIteration > dressingQueueIteration2)
-        {
-            AddQueue2(unit);
-        }
-        else
-        {
-            AddQueue1(unit);
-        }
+        AddQueue1(unit);
     }
 
     private void AddQueue1(Unit unit)
     {
         unit.SetQueuePositions(dressingPositions[dressingQueueIteration]);
         dressingWalkers.Add(unit);
+        print("walk towards " + dressingPositions[dressingQueueIteration]);
         dressingQueueIteration++;
-    }
-    private void AddQueue2(Unit unit)
-    {
-        unit.SetQueuePositions(dressingPositions2[dressingQueueIteration2]);
-        dressingWalkers2.Add(unit);
-        dressingQueueIteration2++;
     }
 
     public void SpawnNewCharacter()
     {
-        Unit u = Instantiate(UnitPrefab, outsideSpawns[Random.Range(0, outsideSpawns.Count)]).GetComponent<Unit>();
+        Unit u = Instantiate(UnitPrefab, outsideSpawns[UnityEngine.Random.Range(0, outsideSpawns.Count)]).GetComponent<Unit>();
+        Vector3 v = UnityEngine.Random.insideUnitSphere * 5;
+        v.y = 0;
+        u.transform.position += v;
         u.transform.SetParent(ai);
-        print("spawned");
+
         u.Init(this);
-        tempU = u;
+        //tempU = u;
     }
     public void RemoveCharacter(Unit u)
     {

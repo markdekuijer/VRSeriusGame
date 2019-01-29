@@ -5,61 +5,30 @@ using UnityEngine;
 public class UnitVisuals : MonoBehaviour
 {
     [Header("Heads")]
-    [SerializeField] private List<Mesh> hairStyles = new List<Mesh>();
-    [SerializeField] private List<Material> hairColors = new List<Material>();
+    [SerializeField] private List<GameObject> hairStyles = new List<GameObject>();
 
     [Header("Bodys")]
-    [SerializeField] private List<Mesh> bodyStyles = new List<Mesh>();
-    [SerializeField] private List<Material> bodyColors = new List<Material>();
-
-    [Header("Legs")]
-    [SerializeField] private List<Mesh> legsStyles = new List<Mesh>();
-    [SerializeField] private List<Material> legsColors = new List<Material>();
-
-    [Space(20)]
-    [SerializeField] private MeshFilter hairMesh;
-    [SerializeField] private MeshRenderer hairRenderer;
-
-    [Space(20)]
-    [SerializeField] private MeshFilter bodyMesh;
-    [SerializeField] private MeshRenderer bodyRenderer;
-
-    [Space(20)]
-    [SerializeField] private MeshFilter legsMesh;
-    [SerializeField] private MeshRenderer legsRenderer;
+    [SerializeField] private List<GameObject> bodyStyles = new List<GameObject>();
 
     public Material red;
     public Material green;
 
-    private CharacterVisuals GetVisuals()
-    {
-        CharacterVisuals v = new CharacterVisuals();
-
-        v.hairStyle = hairStyles[Random.Range(0, hairStyles.Count)];
-        v.hairColor = hairColors[Random.Range(0, hairColors.Count)];
-
-        v.bodyStyle = bodyStyles[Random.Range(0, bodyStyles.Count)];
-        v.bodyColor = bodyColors[Random.Range(0, bodyColors.Count)];
-
-        v.legsStyle = legsStyles[Random.Range(0, legsStyles.Count)];
-        v.legsColor = legsColors[Random.Range(0, legsColors.Count)];
-
-        return v;
-    }
 
     public void RandomizeLook()
     {
-        return;
-        CharacterVisuals v = GetVisuals();
+        int h = Random.Range(0, hairStyles.Count - 1);
+        int b = Random.Range(0, hairStyles.Count - 1);
 
-        hairMesh.mesh = v.hairStyle;
-        hairRenderer.material = v.hairColor;
-
-        bodyMesh.mesh = v.bodyStyle;
-        bodyRenderer.material = v.bodyColor;
-
-        legsMesh.mesh = v.legsStyle;
-        legsRenderer.material = v.legsColor;
+        for (int i = 0; i < hairStyles.Count; i++)
+        {
+            if(i != h)
+                hairStyles[i].SetActive(false);
+        }
+        for (int i = 0; i < bodyStyles.Count; i++)
+        {
+            if(i != b)
+                bodyStyles[i].SetActive(false);
+        }
     }
 
     public void switchTag(bool tagged)
@@ -71,14 +40,3 @@ public class UnitVisuals : MonoBehaviour
     }
 }
 
-public struct CharacterVisuals
-{
-    public Mesh hairStyle;
-    public Material hairColor;
-
-    public Mesh bodyStyle;
-    public Material bodyColor;
-
-    public Mesh legsStyle;
-    public Material legsColor;
-}

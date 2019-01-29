@@ -5,23 +5,28 @@ using UnityEngine;
 public class Bag : MonoBehaviour
 {
     [SerializeField] private Shop shop;
-    Transform t;
+    Vector3 t;
+    Quaternion q;
     Rigidbody rb;
+
+    public int neededItems;
 
     private void Start()
     {
-        t = transform;
+        t = transform.position;
+        q = transform.rotation;
         rb = GetComponent<Rigidbody>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Cloth"))
+        if (other.gameObject.CompareTag("ClothScanned"))
         {
             print("put in back");
             other.gameObject.transform.parent.gameObject.SetActive(false);
+            neededItems--;
         }
-        if (other.gameObject.CompareTag("Unit"))
+        if (other.gameObject.CompareTag("Unit") && neededItems <= 0)
         {
             shop.HandleCounterQueue();
             Reset();
@@ -30,8 +35,8 @@ public class Bag : MonoBehaviour
 
     private void Reset()
     {
-        transform.position = t.position;
-        transform.rotation = t.rotation;
+        transform.position = t;
+        transform.rotation = q;
         rb.useGravity = false;
     }
 }

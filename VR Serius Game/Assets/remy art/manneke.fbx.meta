@@ -1,0 +1,164 @@
+fileFormatVersion: 2
+guid: 92493d8832bbeb14a801ae219319f24e
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: afro
+    100002: baard
+    100004: blond_langer_haar
+    100006: body
+    100008: case1
+    100010: haar_blond
+    100012: haar_bruin
+    100014: haar_kotskleur
+    100016: head
+    100018: littelhead
+    100020: //RootNode
+    100022: punk
+    100024: rugtas
+    100026: tophead
+    400000: afro
+    400002: baard
+    400004: blond_langer_haar
+    400006: body
+    400008: case1
+    400010: haar_blond
+    400012: haar_bruin
+    400014: haar_kotskleur
+    400016: head
+    400018: littelhead
+    400020: //RootNode
+    400022: punk
+    400024: rugtas
+    400026: tophead
+    2100000: lambert2
+    2300000: afro
+    2300002: baard
+    2300004: blond_langer_haar
+    2300006: body
+    2300008: case1
+    2300010: haar_blond
+    2300012: haar_bruin
+    2300014: haar_kotskleur
+    2300016: head
+    2300018: littelhead
+    2300020: punk
+    2300022: rugtas
+    2300024: tophead
+    3300000: afro
+    3300002: baard
+    3300004: blond_langer_haar
+    3300006: body
+    3300008: case1
+    3300010: haar_blond
+    3300012: haar_bruin
+    3300014: haar_kotskleur
+    3300016: head
+    3300018: littelhead
+    3300020: punk
+    3300022: rugtas
+    3300024: tophead
+    4300000: body
+    4300002: head
+    4300004: haar_blond
+    4300006: haar_bruin
+    4300008: haar_kotskleur
+    4300010: tophead
+    4300012: afro
+    4300014: rugtas
+    4300016: case1
+    4300018: littelhead
+    4300020: punk
+    4300022: baard
+    4300024: blond_langer_haar
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert2
+    second: {fileID: 2100000, guid: b1c62712c8833da47855edcfbcdbab4f, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 100
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

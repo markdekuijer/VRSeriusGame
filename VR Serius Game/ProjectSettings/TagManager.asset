@@ -10,6 +10,8 @@ TagManager:
   - BarCode
   - Bags
   - Cloth
+  - Cash
+  - ClothScanned
   layers:
   - Default
   - TransparentFX
@@ -22,7 +24,7 @@ TagManager:
   - AIbody
   - ShopExit
   - Bag
-  - 
+  - throwables
   - 
   - 
   - 

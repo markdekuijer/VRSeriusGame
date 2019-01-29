@@ -19,8 +19,23 @@ public class Unit : MonoBehaviour
     private float maxShopIterationTime = 8f;
     private float currentShopIterationTime;
 
+    [HideInInspector]
+    public bool checkSpawnStuff;
+    [HideInInspector]
+    public Vector3 checkSpawnStuffPos;
+
     private void Update()
     {
+        if (checkSpawnStuff)
+        {
+            if(Vector2.Distance(new Vector2(transform.position.x,transform.position.z), new Vector2(checkSpawnStuffPos.x, checkSpawnStuffPos.z)) < 0.1f)
+            { 
+                print("Found");
+                shop.SpawnNewSet();
+                checkSpawnStuff = false;
+            }
+        }
+
         if (durationInShop <= 0)
             return;
 
@@ -40,7 +55,7 @@ public class Unit : MonoBehaviour
         RandomizeLook();
         RandomizeStats();
 
-        durationInShop = Random.Range(3, 7);
+        durationInShop = 3;// Random.Range(6, 7);
         agent.SetDestination(GetNewLocationInShop());
     }
     public void RandomizeLook()
@@ -69,6 +84,7 @@ public class Unit : MonoBehaviour
             {
                 if (willBuySomething)
                 {
+                    print("good");
                     shop.AddToDressing(this);
                 }
                 else if (stealing)

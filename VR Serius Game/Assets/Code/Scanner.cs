@@ -6,7 +6,7 @@ public class Scanner : MonoBehaviour
 {
     private void Update()
     {
-        RaycastHit[] hits = Physics.BoxCastAll(transform.position + new Vector3(0, .02f, 0), new Vector3(0.15f,0.01f,0.15f), Vector3.up);
+        RaycastHit[] hits = Physics.BoxCastAll(transform.position + new Vector3(0, .02f, 0), new Vector3(0.15f,0.01f,0.15f), transform.forward);
         for (int i = 0; i < hits.Length; i++)
         {
             if (hits[i].transform.gameObject.CompareTag("BarCode"))
@@ -25,6 +25,7 @@ public class Scanner : MonoBehaviour
                         if (Vector3.Distance(transform.position,hit.transform.position) < 0.1f)
                         {
                             print("succeeded");
+                            hits[i].transform.root.tag = "ClothScanned";
                         }
                     }
                 }
@@ -32,9 +33,5 @@ public class Scanner : MonoBehaviour
             //print(hits[i].transform.gameObject.name);
         }
         //print("___________________");
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawCube(transform.position + new Vector3(0, .02f, 0), new Vector3(0.3f, 0.05f, 0.3f));
     }
 }
