@@ -16,7 +16,7 @@ public class Unit : MonoBehaviour
     private NavMeshAgent agent;
     private bool leaving;
 
-    private float maxShopIterationTime = 8f;
+    private float maxShopIterationTime = 20f;
     private float currentShopIterationTime;
 
     [HideInInspector]
@@ -24,15 +24,40 @@ public class Unit : MonoBehaviour
     [HideInInspector]
     public Vector3 checkSpawnStuffPos;
 
+    bool fittingCloths;
+    float clothTimer = 0;
+    float fittingDuration;
+    int dressingNumber;
+
+    private void Start()
+    {
+        fittingDuration = UnityEngine.Random.Range(10f, 30f);
+    }
+
     private void Update()
     {
         if (checkSpawnStuff)
         {
             if(Vector2.Distance(new Vector2(transform.position.x,transform.position.z), new Vector2(checkSpawnStuffPos.x, checkSpawnStuffPos.z)) < 0.1f)
             { 
-                print("Found");
                 shop.SpawnNewSet();
                 checkSpawnStuff = false;
+            }
+        }
+
+        if (Vector3.Distance(transform.position, endPos) < 1)
+        {
+            shop.SpawnNewCharacter();
+            GameObject.Destroy(this.gameObject);
+        }
+
+        if (fittingCloths)
+        {
+            clothTimer += Time.deltaTime;
+            if(clothTimer > fittingDuration)
+            {
+                shop.UpdateNextQueueDressing(dressingNumber);
+                fittingCloths = false;
             }
         }
 
@@ -40,6 +65,12 @@ public class Unit : MonoBehaviour
             return;
 
         HandleShopDuration();
+    }
+
+    public void InitDressing(int roomNumber)
+    {
+        fittingCloths = true;
+        dressingNumber = roomNumber;
     }
 
     #region Init And Randomize
@@ -55,7 +86,7 @@ public class Unit : MonoBehaviour
         RandomizeLook();
         RandomizeStats();
 
-        durationInShop = 3;// Random.Range(6, 7);
+        durationInShop = Random.Range(4, 12);
         agent.SetDestination(GetNewLocationInShop());
     }
     public void RandomizeLook()
@@ -84,7 +115,6 @@ public class Unit : MonoBehaviour
             {
                 if (willBuySomething)
                 {
-                    print("good");
                     shop.AddToDressing(this);
                 }
                 else if (stealing)
@@ -117,9 +147,12 @@ public class Unit : MonoBehaviour
     }
     #endregion
 
+    Vector3 endPos = new Vector3(10000,0,0);
     public void Leave()
     {
-        agent.SetDestination(shop.GetShopExit());
+        Vector3 v = shop.GetShopExit();
+        endPos = v;
+        agent.SetDestination(v);
         leaving = true;
     }
 

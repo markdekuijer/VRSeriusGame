@@ -14,7 +14,12 @@ public class Shop : MonoBehaviour
     [Header("SpawnLocations")]
     [SerializeField] private List<Transform> outsideSpawns = new List<Transform>();
     [SerializeField] private List<Transform> queuePositions = new List<Transform>();
+
     [SerializeField] private List<Transform> dressingPositions = new List<Transform>();
+    [SerializeField] private List<Transform> dressingWaitlist = new List<Transform>();
+    public List<Unit> dressingWalkers = new List<Unit>();
+
+    int currentDressing;
 
     public Transform spawnMoneyPos;
     public GameObject money;
@@ -27,57 +32,41 @@ public class Shop : MonoBehaviour
     private float counterCurrentTimer;
     private int counterQueueIteration;
 
-    private List<Unit> dressingWalkers = new List<Unit>();
-    private float dressingCurrentTimer;
-    private int dressingQueueIteration;
-
     public int spawnAmount;
 
     public List<Transform> locations = new List<Transform>();
-
-    //Unit tempU;
-    private void Start()
+    bool crowdSound;
+    float crowdTimer;
+    public void Begin()
     {
         for (int i = 0; i < spawnAmount; i++)
         {
             SpawnNewCharacter();
+            crowdSound = true;
         }
 
         counterCurrentTimer = maxTimer;
-        dressingCurrentTimer = maxTimer;
     }
 
+    bool playing;
     private void Update()
     {
-        //if (Input.GetKey(KeyCode.Space))
-        //    tempU.ChangeColor(true);
-        //else
-        //    tempU.ChangeColor(false);
+        if (playing || !crowdSound)
+            return;
 
-        if (CheckDressingQueue())
-            HandleDressingQueue();
-
+        if (crowdTimer > 5)
+        {
+            GetComponent<AudioSource>().Play();
+            playing = true;
+        }
+        crowdTimer += Time.deltaTime;
     }
 
     public bool CheckCounterQueue()
     {
         return counterWalkers.Count > 0;
     }
-    //public void HandleCounterQueue()
-    //{
-    //    counterCurrentTimer -= Time.deltaTime;
-    //    if (counterCurrentTimer <= 0)
-    //    {
-    //        counterWalkers[0].Leave();
-    //        counterWalkers.RemoveAt(0);
-    //        counterQueueIteration--;
-    //        for (int i = 0; i < counterWalkers.Count; i++)
-    //        {
-    //            counterWalkers[i].SetQueuePositions(queuePositions[i]);
-    //        }
-    //        counterCurrentTimer = maxTimer;
-    //    }
-    //}
+    
     public void HandleCounterQueue()
     {
         if (!CheckCounterQueue())
@@ -90,7 +79,6 @@ public class Shop : MonoBehaviour
         {
             counterWalkers[i].SetQueuePositions(queuePositions[i]);
         }
-        SpawnNewSet();
     }
 
     public void SpawnNewSet()
@@ -103,41 +91,51 @@ public class Shop : MonoBehaviour
         }
     }
 
-    public bool CheckDressingQueue()
-    {
-        return dressingWalkers.Count > 0;
-    }
+    //public void HandleDressingQueue()
+    //{
+    //    dressingCurrentTimer -= Time.deltaTime;
+    //    if (dressingCurrentTimer <= 0 && dressingWalkers.Count > 0)
+    //    {
+    //        if (dressingWalkers.Count > 2)
+    //            SetNextPosIterations(3);
+    //        else if (dressingWalkers.Count > 1)
+    //            SetNextPosIterations(2);
+    //        else if (dressingWalkers.Count > 0)
+    //            SetNextPosIterations(1);
 
-    public void HandleDressingQueue()
-    {
-        dressingCurrentTimer -= Time.deltaTime;
-        if (dressingCurrentTimer <= 0 && dressingWalkers.Count > 0)
-        {
-            if (dressingWalkers.Count > 2)
-                SetNextPosIterations(3);
-            else if (dressingWalkers.Count > 1)
-                SetNextPosIterations(2);
-            else if (dressingWalkers.Count > 0)
-                SetNextPosIterations(1);
+    //        dressingCurrentTimer = maxTimer;
+    //    }
+    //}
 
-            dressingCurrentTimer = maxTimer;
-        }
-    }
+    //public void SetNextPosIterations(int iter)
+    //{
+    //    for (int j = 0; j < iter; j++)
+    //    {
+    //        dressingWalkers[0].CheckForStealOrBuy();
+    //        dressingWalkers.RemoveAt(0);
+    //        dressingQueueIteration--;
 
-    public void SetNextPosIterations(int iter)
-    {
-        for (int j = 0; j < iter; j++)
-        {
-            dressingWalkers[0].CheckForStealOrBuy();
-            dressingWalkers.RemoveAt(0);
-            dressingQueueIteration--;
+    //        for (int i = 0; i < dressingWalkers.Count; i++)
+    //        {
+    //            dressingWalkers[i].SetQueuePositions(dressingPositions[i]);
+    //        }
+    //    }
+    //}
 
-            for (int i = 0; i < dressingWalkers.Count; i++)
-            {
-                dressingWalkers[i].SetQueuePositions(dressingPositions[i]);
-            }
-        }
-    }
+    //public void RemoveDresser(int room)
+    //{
+    //        dressingWalkers[room].CheckForStealOrBuy();
+    //        dressingWalkers.RemoveAt(room);
+    //        dressingQueueIteration--;
+
+    //        for (int i = 0; i < dressingWalkers.Count; i++)
+    //        {
+    //            dressingWalkers[i].SetQueuePositions(dressingPositions[i]);
+    //        }
+
+    //}
+
+    
 
     public Vector3 GetNewLocationInShop()
     {
@@ -154,7 +152,6 @@ public class Shop : MonoBehaviour
 
     public void AddToCounterQueue(Unit unit)
     {
-        print("added unit " + unit.gameObject.name);
         unit.checkSpawnStuff = true;
         unit.checkSpawnStuffPos = queuePositions[0].position;
         unit.SetQueuePositions(queuePositions[counterQueueIteration]);
@@ -168,10 +165,78 @@ public class Shop : MonoBehaviour
 
     private void AddQueue1(Unit unit)
     {
-        unit.SetQueuePositions(dressingPositions[dressingQueueIteration]);
-        dressingWalkers.Add(unit);
-        print("walk towards " + dressingPositions[dressingQueueIteration]);
-        dressingQueueIteration++;
+        if(currentDressing <= 2)
+        {
+            int pos = GetDressingPosition();
+            unit.SetQueuePositions(dressingPositions[pos]);
+            dressingWalkers[pos] = unit;
+            unit.InitDressing(pos);
+            currentDressing++;
+        }
+        else
+        {
+            int pos = GetWaitingPos();
+            unit.SetQueuePositions(dressingWaitlist[pos]);
+            print(pos + "  ||  " + pos + dressingPositions.Count);
+            dressingWalkers[pos + dressingPositions.Count] = unit;
+        }
+    }
+
+    public void UpdateNextQueueDressing(int freeRoom)
+    {
+        dressingWalkers[freeRoom].CheckForStealOrBuy();
+        dressingWalkers[freeRoom] = null;
+        currentDressing--;
+
+        if (dressingWalkers[3] != null && dressingWalkers[4] != null)
+        {
+            int pos = GetDressingPosition();
+            dressingWalkers[3].SetQueuePositions(dressingPositions[pos]);
+            dressingWalkers[3].InitDressing(pos);
+            dressingWalkers[pos] = dressingWalkers[3];
+            currentDressing++;
+
+            dressingWalkers[3] = dressingWalkers[4];
+            dressingWalkers[4] = null;
+            dressingWalkers[3].SetQueuePositions(dressingWaitlist[pos]);
+        }
+        else if (dressingWalkers[3] != null)
+        {
+            int pos = GetDressingPosition();
+            dressingWalkers[3].SetQueuePositions(dressingPositions[pos]);
+            dressingWalkers[3].InitDressing(pos);
+            dressingWalkers[pos] = dressingWalkers[3];
+            dressingWalkers[3] = null;
+            currentDressing++;
+        }
+        else
+        {
+            Debug.Log("mnmo more waiting");
+        }
+    }
+
+    public int GetDressingPosition()
+    {
+        if (dressingWalkers[0] == null)
+            return 0;
+        if (dressingWalkers[1] == null)
+            return 1;
+        if (dressingWalkers[2] == null)
+            return 2;
+
+        Debug.LogError("ERROR");
+        return -1;
+    }
+
+    public int GetWaitingPos()
+    {
+        if (dressingWalkers[3] == null)
+            return 0;
+        if (dressingWalkers[4] == null)
+            return 1;
+
+        Debug.LogError("ERROR");
+        return -1;
     }
 
     public void SpawnNewCharacter()
@@ -183,7 +248,6 @@ public class Shop : MonoBehaviour
         u.transform.SetParent(ai);
 
         u.Init(this);
-        //tempU = u;
     }
     public void RemoveCharacter(Unit u)
     {

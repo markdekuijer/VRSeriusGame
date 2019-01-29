@@ -4,34 +4,33 @@ using UnityEngine;
 
 public class Scanner : MonoBehaviour
 {
+    public LayerMask mask;
+    public AudioSource a;
+
     private void Update()
     {
-        RaycastHit[] hits = Physics.BoxCastAll(transform.position + new Vector3(0, .02f, 0), new Vector3(0.15f,0.01f,0.15f), transform.forward);
-        for (int i = 0; i < hits.Length; i++)
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, mask))
         {
-            if (hits[i].transform.gameObject.CompareTag("BarCode"))
+
+            if (hit.transform.gameObject.CompareTag("BarCode"))
             {
-                print("barcode in box");
+                print("direct hit");
 
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, hits[i].transform.position - transform.position, out hit, Mathf.Infinity))
+                if (Vector3.Distance(transform.position, hit.transform.position) < 0.25f)
                 {
-                    print("raycast hit");
-
-                    if (hit.transform.gameObject.CompareTag("BarCode"))
+                    print("succeeded");
+                    hit.transform.parent.tag = "ClothScanned";
+                    a.Play();
+                    for (int i = 0; i < hit.transform.parent.childCount; i++)
                     {
-                        print("direct hit");
-
-                        if (Vector3.Distance(transform.position,hit.transform.position) < 0.1f)
-                        {
-                            print("succeeded");
-                            hits[i].transform.root.tag = "ClothScanned";
-                        }
+                        if (hit.transform.root.GetChild(i).gameObject.tag != "BarCode")
+                            hit.transform.root.GetChild(i).gameObject.tag = "ClothScanned";
+                        else
+                            hit.transform.root.GetChild(i).gameObject.SetActive(false);
                     }
                 }
             }
-            //print(hits[i].transform.gameObject.name);
         }
-        //print("___________________");
     }
 }
